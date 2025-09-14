@@ -16,7 +16,9 @@ logger = getLogger(__name__)
 class AppController:
     ALARM_SOUND_PATH = "assets/audio/alarm.wav"
 
-    NIGHTSCOUT_POLLING_INTERVAL = 30
+    NIGHTSCOUT_POLLING_INTERVAL = 60
+
+    ALARM_INTERVAL = 1
 
     INTERFACE_UPDATE_INTERVAL = 0.1
 
@@ -37,8 +39,10 @@ class AppController:
         self._nightscout_client = nightscout_client
 
         self._alarm_sound: playsound3.Sound | None = None
+        self._is_alarm_on: bool = False
         self._alarm_thread: threading.Thread | None = None
 
+        self._is_polling: bool = False
         self._polling_thread: threading.Thread | None = None
 
         self._state.add_listener(self._on_state_change)
@@ -62,48 +66,63 @@ class AppController:
                 self._state.adjust_brightness(-0.1)
 
     def _alarm_loop(self) -> None:
-        while self._is_running and (
-            not self._alarm_sound or not self._alarm_sound.is_alive()
-        ):
-            self._alarm_sound = playsound(self.ALARM_SOUND_PATH, block=False)
+        while self._is_running:
+            if self._is_alarm_on and (
+                not self._alarm_sound or not self._alarm_sound.is_alive()
+            ):
+                self._alarm_sound = playsound(self.ALARM_SOUND_PATH, block=False)
+
+            sleep(self.ALARM_INTERVAL)
 
     def _play_alarm_sound(self) -> None:
-        if not self._alarm_thread or not self._alarm_thread.is_alive():
-            self._alarm_thread = threading.Thread(target=self._alarm_loop, daemon=True)
-            self._alarm_thread.start()
+        self._is_alarm_on = True
 
     def _stop_alarm_sound(self) -> None:
         if self._alarm_sound:
             self._alarm_sound.stop()
-
-        if self._alarm_thread and self._alarm_thread.is_alive():
-            self._alarm_thread.join(timeout=self.THREAD_JOIN_TIMEOUT)
+        self._is_alarm_on = False
 
     def _poll_nightscout(self) -> None:
         while self._is_running:
-            try:
-                (latest_sgv, trend) = self._nightscout_client.get_latest_entry()
-                self._state.set_latest_sgv(latest_sgv, trend)
-            except Exception as e:
-                logger.error(f"Error polling Nightscout: {e}")
+            if self._is_polling:
+                try:
+                    (latest_sgv, trend) = self._nightscout_client.get_latest_entry()
+                    self._state.set_latest_sgv(latest_sgv, trend)
+                except Exception as e:
+                    logger.error(f"Error polling Nightscout: {e}")
 
             sleep(self.NIGHTSCOUT_POLLING_INTERVAL)
 
     def _start_poll_nightscout(self) -> None:
+        self._is_polling = True
+
+    def _stop_poll_nightscout(self) -> None:
+        self._is_polling = False
+
+    def _start_threads(self) -> None:
+        if not self._alarm_thread or not self._alarm_thread.is_alive():
+            self._alarm_thread = threading.Thread(target=self._alarm_loop, daemon=True)
+            self._alarm_thread.start()
         if not self._polling_thread or not self._polling_thread.is_alive():
+            self._start_poll_nightscout()
             self._polling_thread = threading.Thread(
                 target=self._poll_nightscout, daemon=True
             )
             self._polling_thread.start()
 
-    def _stop_poll_nightscout(self) -> None:
-        if self._polling_thread and self._polling_thread.is_alive():
+    def _stop_threads(self) -> None:
+        if self._alarm_thread:
+            self._stop_alarm_sound()
+            self._alarm_thread.join(timeout=self.THREAD_JOIN_TIMEOUT)
+            self._alarm_thread = None
+        if self._polling_thread:
+            self._stop_poll_nightscout()
             self._polling_thread.join(timeout=self.THREAD_JOIN_TIMEOUT)
+            self._polling_thread = None
 
     def stop(self) -> None:
         self._is_running = False
-        self._stop_alarm_sound()
-        self._stop_poll_nightscout()
+        self._stop_threads()
         self._interface.cleanup()
 
     def start(self) -> None:
@@ -111,7 +130,7 @@ class AppController:
             return
 
         self._is_running = True
-        self._start_poll_nightscout()
+        self._start_threads()
 
         try:
             while self._is_running:
