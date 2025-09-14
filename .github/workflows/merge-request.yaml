@@ -1,4 +1,4 @@
-name: Nightscout Display Merge Request
+name: Merge Request
 
 on:
   push:
@@ -10,7 +10,7 @@ permissions:
   contents: read
 
 jobs:
-  build:
+  merge-request:
 
     runs-on: ubuntu-latest
 
