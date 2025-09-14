@@ -55,6 +55,30 @@ sudo apt install libjpeg-dev zlib1g-dev liblgpio-dev swig libfreetype6-dev mpg12
   ```
 4. `uv run --no-dev -m src.main`
 
+### Run the display as a service
+
+To run the display permanently, create a new service `sudo vim /etc/systemd/system/nightscout-display.service`
+```
+[Unit]
+Description=Nightscout Display
+After=network.target
+
+[Service]
+ExecStart=${uv-path} run --no-dev -m src.main
+WorkingDirectory=/home/${user}/nightscout-display
+StandardOutput=inherit
+StandardError=inherit
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target
+```
+
+`sudo systemctl daemon-reload && sudo systemctl enable nightscout-display.service && sudo systemctl start nightscout-display.service`
+
+Follow the logs with `sudo journalctl -u nightscout-display.service -f`
+
 ## Local Development
 
 Install uv with your preferred method (or the same way as in "Run the display")
