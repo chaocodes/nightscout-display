@@ -2,10 +2,12 @@
 
 A Raspberry Pi-powered glucose monitor display using Nightscout data, designed for Pirate Audio HAT and Raspberry Pi Zero 2 W.
 
+<img src="./demo.gif" alt="demo" width="200"/>
+
 ## Features
-- Real-time glucose readings from Nightscout
+- Glucose readings from Nightscout
 - Visual trend indicators and status colors
-- Audio alarms for critical values
+- Alarm for critical levels
 - Brightness and volume controls
 - Animated status indicators
 
@@ -52,7 +54,7 @@ sudo apt install python3-rpi.gpio python3-spidev python3-pip python3-pil python3
 
 ## Local Development
 
-Run the app with `uv run -m src/main`
+Run the app with `uv run -m src.main`
 
 Outside of a raspberry pi, this will use PyGame to create the window.
 
