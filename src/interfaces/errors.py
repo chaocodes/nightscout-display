@@ -1,0 +1,2 @@
+class InterfaceClosedError(Exception):
+    pass

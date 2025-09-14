@@ -1,0 +1,31 @@
+[project]
+name = "nightscout-display"
+version = "0.0.0"
+description = "Raspberry Pi display for nightscout using Pirate Audio & Raspberry Pi Zero 2 W"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "httpx>=0.28.1",
+    "pillow>=11.3.0",
+    "playsound3>=3.2.6",
+    "rpi-gpio>=0.7.1 ; platform_machine == 'aarch64' or platform_machine == 'armv7l'",
+    "st7789>=1.0.1 ; platform_machine == 'aarch64' or platform_machine == 'armv7l'",
+]
+
+[dependency-groups]
+dev = [
+    "mypy>=1.18.1",
+    "numpy>=2.3.2",
+    "pre-commit>=4.3.0",
+    "pygame>=2.6.1",
+    "pytest>=8.4.2",
+    "pytest-cov>=7.0.0",
+    "ruff>=0.12.10",
+]
+
+[tool.pytest.ini_options]
+pythonpath = "."
+addopts = "--cov=src --cov-report=term-missing"
+
+[tool.mypy]
+strict = true
