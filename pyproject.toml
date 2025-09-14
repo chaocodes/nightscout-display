@@ -8,7 +8,7 @@ dependencies = [
     "httpx>=0.28.1",
     "pillow>=11.3.0",
     "playsound3>=3.2.6",
-    "rpi-gpio>=0.7.1 ; platform_machine == 'aarch64' or platform_machine == 'armv7l'",
+    "rpi-lgpio>=0.6 ; platform_machine == 'aarch64' or platform_machine == 'armv7l'",
     "st7789>=1.0.1 ; platform_machine == 'aarch64' or platform_machine == 'armv7l'",
 ]
 

@@ -50,7 +50,7 @@ class ST7789Interface(Interface):
         self.display.begin()
 
         GPIO.setmode(GPIO.BCM)
-        GPIO.setup(self.BUTTONS.keys(), GPIO.IN, pull_up_down=GPIO.PUD_UP)
+        GPIO.setup(list(self.BUTTONS.keys()), GPIO.IN, pull_up_down=GPIO.PUD_UP)
         for pin in self.BUTTONS.keys():
             GPIO.add_event_detect(
                 pin,
@@ -67,6 +67,7 @@ class ST7789Interface(Interface):
         self.display.display(image)
 
     def cleanup(self) -> None:
+        self.display.command(st7789.ST7789_DISPOFF)
         GPIO.cleanup()
 
     @staticmethod
