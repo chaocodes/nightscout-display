@@ -41,14 +41,14 @@ sudo apt install python3-rpi.gpio python3-spidev python3-pip python3-pil python3
 
 ## Usage
 
-#. Clone the repo on to your raspberry pi
-#. Create a virtual env using system installed packages `uv venv --system-site-packages .venv`
-#. Create a `config.ini` file in the root directory of the project. Set the `base_url` to point to your hosted nightscout project.
+1. Clone the repo on to your raspberry pi
+2. Create a virtual env using system installed packages `uv venv --system-site-packages .venv`
+3. Create a `config.ini` file in the root directory of the project. Set the `base_url` to point to your hosted nightscout project.
   ```
   [nightscout]
   base_url = https://website-with-nightscout-api.com
   ```
-#. `uv run -m src.main --no-dev`
+4. `uv run -m src.main --no-dev`
 
 ## Local Development
 
