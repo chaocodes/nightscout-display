@@ -44,7 +44,7 @@ class AppState:
         self.status = Threshold.get_status(sgv)
 
         if old_status != self.status:
-            if self.status in [Status.LOW_CRITICAL, Status.HIGH_CRITICAL]:
+            if self.status in [Status.LOW_CRITICAL]:
                 self.is_alarm_on = True
                 self.is_alarm_acknowledged = False
             else:

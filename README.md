@@ -13,11 +13,18 @@ A Raspberry Pi-powered glucose monitor display using Nightscout, designed for Pi
 
 ## Installation
 
-### Hardware:
+### Hardware
 - [Raspberry Pi Zero 2 W](https://www.raspberrypi.com/products/raspberry-pi-zero-2-w/)
 - [Pirate Audio HAT](https://shop.pimoroni.com/products/pirate-audio-mini-speaker?variant=31189753692243)
 
 You will need to either install headers on your Pi Zero 2 W or buy it pre-installed. Seat the Pirate Audio HAT on the header pins firmly.
+
+### Dock
+- [3D Printed Dock](https://www.thingiverse.com/thing:4420857)
+
+I use the above 3D printed dock to mount the Raspberry Pi on to display on my nightstand.
+
+<img src="./demo2.gif" alt="demo2" width="250"/>
 
 ### Operating System
 
